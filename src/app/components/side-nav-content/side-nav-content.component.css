@@ -1,0 +1,16 @@
+.side-nav-bar-content {
+    flex: 1;
+}
+.side-nav-bar-content .side-nav-bar-menu {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+.side-nav-bar-content li {
+    font-size: 1em;
+    margin-bottom: 32px;
+}
+.side-nav-bar-content li a {
+    color: #000;
+    text-decoration: none;
+}

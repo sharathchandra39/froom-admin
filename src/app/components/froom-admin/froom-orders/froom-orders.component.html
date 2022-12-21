@@ -1,0 +1,99 @@
+<hr>
+
+<div class="row " style="width: 100%; height: 100%;">
+
+    <mat-accordion>
+        <mat-expansion-panel class="w-100" [expanded]="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <i class="fa fa-list" aria-hidden="true"></i> &nbsp;&nbsp;
+                    <b>List of Froom Orders</b>
+                </mat-panel-title>
+                <mat-panel-description class="justify-content-end">
+                    <span (click)="$event.stopPropagation()">
+                        <button class="btn btn-sm btn-secondary" style="margin-right: 5px; margin-bottom: 10px;"
+                            [disabled]=" !selectedRowData || selectedRowData.length == 0"
+                            title="Select a Row to View Order Details" (click)="openViewModal(viewFroomOrder)">
+                            <i class="fa fa-eye" aria-hidden="true"></i>  </button>
+                        <button class="btn btn-sm btn-secondary" style="margin-right: 5px; margin-bottom: 10px;"> <i
+                                class="fa fa-refresh" aria-hidden="true"></i> </button>
+                        <button class="btn btn-sm btn-secondary" style="margin-right: 5px; margin-bottom: 10px;"> <i
+                                class="fa fa-download" aria-hidden="true"></i>  </button>
+                    </span>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="col-12" *ngIf="rowData$ && rowData$.length>0; else noData">
+
+                <ag-grid-angular style="width: 100%; clear: both; height: 40vh; border: none; margin-top: 0px;"
+                    class="ag-theme-alpine" [columnDefs]="columnDefs" 
+                    [rowData]="rowData$" [gridOptions]="gridOptions" [suppressMenuHide]="true"
+                    [rowSelection]="gridOptions.rowSelection" (selectionChanged)="onSelectionChanged($event)"
+                    [animateRows]="true" (gridReady)="onGridReady($event)">
+                </ag-grid-angular>
+            </div>
+        </mat-expansion-panel>
+
+    </mat-accordion>
+
+</div>
+<ng-template #noData>
+    No Data
+</ng-template>
+
+<ng-template #viewFroomOrder let-modal>
+    <div>
+        <div class="modal-header">
+            <h4 class="modal-title">Froom Order Details -<b> {{selectedRowData[0].uuID}}</b></h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross-click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+        </div>
+        <div class="modal-body">
+            <mat-accordion>
+                <mat-expansion-panel class="w-100" [expanded]="true">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+ &nbsp;&nbsp;
+                            <b>Froom Order Details : </b>
+                        </mat-panel-title>
+                        <mat-panel-description class="justify-content-end">
+                            <span (click)="$event.stopPropagation()">
+                               
+                            </span>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div  *ngIf="finalProductDetails ">
+                        <div *ngFor="let prod of $any(finalProductDetails[0]); let i=index">
+                            <div class="row">
+
+                                <div class="col-12"> {{i+1}}. Product Details </div>
+                                <div class="col-6"> Product Key </div>
+                                <div class="col-6"> {{prod.key}}</div>
+                                <div class="col-6"> Product ID </div>
+                                <div class="col-6"> {{prod.productId}}</div>
+                                <div class="col-6"> Product Category </div>
+                                <div class="col-6"> {{prod.productCategory}}</div>
+                                <div class="col-6"> Product Name </div>
+                                <div class="col-6"> {{prod.productName}}</div>
+                                <div class="col-6"> Product Price </div>
+                                <div class="col-6"> {{prod.productPrice}}</div>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                    
+                </mat-expansion-panel>
+        
+            </mat-accordion>
+        </div>
+        <div class="modal-footer">
+            <div class="p-2 ml-auto">
+                <button class="btn btn-light" (click)="modal.dismiss('Cross-click')">Close</button>
+            </div>
+        </div>
+    </div>
+
+</ng-template>

@@ -1,1 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+html, body{
+   height: 100%;
+   width: 100%;
+   padding: 5px;
+   box-sizing: border-box;
+   -webkit-overflow-scrolling: touch;
+   background-color: #61b1e9;
+}s
+
+router-outlet ~ * {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+ }
+ 
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
