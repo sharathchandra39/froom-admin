@@ -4,6 +4,7 @@ import { FroomAdminComponent } from './components/froom-admin/froom-admin/froom-
 import { FroomLocationsComponent } from './components/froom-admin/froom-locations/froom-locations.component';
 import { FroomOrdersComponent } from './components/froom-admin/froom-orders/froom-orders.component';
 import { HomeComponent } from './components/home/home.component';
+import { MerchantMgmtComponent } from './components/merchant/merchant-mgmt/merchant-mgmt.component';
 import { ApppageComponent } from './pages/apppage/apppage.component';
 
 const routes: Routes = [
@@ -19,6 +20,10 @@ const routes: Routes = [
   {
     path: 'froom-locations',
     component: FroomLocationsComponent 
+  },
+  {
+    path:'merchant-updates',
+    component: MerchantMgmtComponent
   },
   {
     path: '',

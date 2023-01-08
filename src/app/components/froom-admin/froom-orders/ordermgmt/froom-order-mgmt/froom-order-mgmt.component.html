@@ -1,0 +1,391 @@
+<div class="modal-body">
+    <form [formGroup]="froomOrderForm">
+        <mat-accordion>
+            <mat-expansion-panel class="w-100" [expanded]="showZipSelectionSection">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-map-marker" aria-hidden="true"></i> &nbsp;&nbsp;
+                        <b>ZIP & Froom Location Selection</b>
+                    </mat-panel-title>
+                    <mat-panel-description class="justify-content-end">
+                        <span *ngIf="selectedRowData && selectedRowData.length>0" (click)="$event.stopPropagation()"
+                            class="">Selected Froom Location
+                            <b>{{selectedRowData[0].zipDetails}}</b>
+                        </span>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div class="row">
+                    <div class="col-3 mb-3">
+                        <label class="form-label">
+                            <b>Zip Code:</b></label>
+
+                        <input class="form-control required" formControlName="zipCode" placeholder="ZIP Code">
+
+                        <div *ngIf="froomOrderForm.get('zipCode')?.invalid && 
+                (froomOrderForm.get('zipCode')?.dirty 
+                || froomOrderForm.get('zipCode')?.touched)" style="margin-top: 5px; margin-left:5px;">
+                            <span class="text text-danger">Please provide a ZIP Code.</span>
+                        </div>
+                    </div>
+                    <div class="col-2 mb-3" style="margin-top: 30px;">
+                        <button class="btn btn-sm btn-secondary" (click)="fetchFroomLocations()">
+                            Fetch Locations
+                        </button>
+                    </div>
+                    <div class="col-7 mb-3" style="margin-top: 33px;"
+                        *ngIf="cntOfFroomLocations && cntOfFroomLocations >0; else noLocations">
+                        <div class="form-label">
+                            <strong class="alert alert-info"> Found {{cntOfFroomLocations}} Froom Locations in this ZIP
+                                Code</strong>
+                        </div>
+                    </div>
+                    <ng-template #noLocations st>
+                        <div class="form-label mt-3" *ngIf="showNoFroomLocations">
+                            <strong class="alert alert-info"> No Froom Locations Found for this ZIP Code </strong>
+                        </div>
+                    </ng-template>
+
+                    <div class="row">
+                        <div class="col-12 mb-3" *ngIf="rowData$ && rowData$.length>0; ">
+
+                            <ag-grid-angular
+                                style="width: 100%; clear: both; height: 40vh; border: none; margin-top: 0px;"
+                                class="ag-theme-alpine" [columnDefs]="columnDefs" [rowData]="rowData$"
+                                [gridOptions]="gridOptions" [suppressMenuHide]="true"
+                                [rowSelection]="gridOptions.rowSelection"
+                                (selectionChanged)="onSelectionChanged($event)" [animateRows]="true"
+                                (gridReady)="onGridReady($event)">
+                            </ag-grid-angular>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </mat-expansion-panel>
+
+        </mat-accordion>
+        <br>
+        <mat-accordion *ngIf="showContactSelection">
+            <mat-expansion-panel class="w-100" [expanded]="showContactSelectionSection">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-user" aria-hidden="true"></i> &nbsp;&nbsp;
+                        <b>Customer Details</b>
+                    </mat-panel-title>
+                    <mat-panel-description class="justify-content-end">
+                        <span *ngIf="customerUserName" (click)="$event.stopPropagation()" class="">Hello <b>
+                                <i> {{customerUserName}} </i>
+                            </b>
+                        </span>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div class="row">
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>User Name:</b></label>
+
+                        <input class="form-control required" formControlName="userName" placeholder="User Name">
+
+                        <div *ngIf="froomOrderForm.get('userName')?.invalid && 
+                        (froomOrderForm.get('userName')?.dirty 
+                        || froomOrderForm.get('userName')?.touched)" style="margin-top: 5px; margin-left:5px;">
+                            <span class="text text-danger">Please provide a User Name.</span>
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>User Email:</b></label>
+
+                        <input class="form-control required" formControlName="userEmail" placeholder="User Email">
+
+                        <div *ngIf="froomOrderForm.get('userEmail')?.invalid && 
+                        (froomOrderForm.get('userEmail')?.dirty 
+                        || froomOrderForm.get('userEmail')?.touched)" style="margin-top: 5px; margin-left:5px;">
+                            <span class="text text-danger">Please provide a User Email.</span>
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>User Phone Number:</b></label>
+
+                        <input class="form-control required" formControlName="userPhoneNumber"
+                            placeholder="User Phone Number">
+
+                        <div *ngIf="froomOrderForm.get('userPhoneNumber')?.invalid && 
+                        (froomOrderForm.get('userPhoneNumber')?.dirty 
+                        || froomOrderForm.get('userPhoneNumber')?.touched)" style="margin-top: 5px; margin-left:5px;">
+                            <span class="text text-danger">Please provide a User Phone Number.</span>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-primary" style="float: right;" (click)="continueToMerchantSelection()"
+                            [disabled]="validateUserForm()">Next</button>
+                    </div>
+
+
+                </div>
+            </mat-expansion-panel>
+
+        </mat-accordion>
+        <br>
+        <mat-accordion *ngIf="showMerchantSelection">
+            <mat-expansion-panel class="w-100" [expanded]="showMerchantSelectionSection">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-industry" aria-hidden="true"></i> &nbsp;&nbsp;
+                        <b>Merchant Details</b>
+                    </mat-panel-title>
+                    <mat-panel-description class="justify-content-end">
+                        <span *ngIf="merchantName" (click)="$event.stopPropagation()" class="">Merchant: <b>
+                                <i> {{merchantName}} </i>
+                            </b>
+                        </span>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div class="row">
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>Merchant Name:</b></label>
+
+                        <input class="form-control required" formControlName="merchantName" placeholder="Merchant Name">
+
+                        <div *ngIf="froomOrderForm.get('merchantName')?.invalid && 
+                        (froomOrderForm.get('merchantName')?.dirty 
+                        || froomOrderForm.get('merchantName')?.touched)" style="margin-top: 5px; margin-left:5px;">
+                            <span class="text text-danger">Please provide a Merchant Name.</span>
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>Merchant Email:</b></label>
+
+                        <input class="form-control required" formControlName="merchantEmail"
+                            placeholder="Merchant Email">
+
+                        <div *ngIf="froomOrderForm.get('merchantEmail')?.invalid && 
+                        (froomOrderForm.get('merchantEmail')?.dirty 
+                        || froomOrderForm.get('merchantEmail')?.touched)" style="margin-top: 5px; margin-left:5px;">
+                            <span class="text text-danger">Please provide a Merchant Email.</span>
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>Merchant Phone Number:</b></label>
+
+                        <input class="form-control required" formControlName="merchantPhoneNumber"
+                            placeholder="Merchant Phone Number">
+
+                        <div *ngIf="froomOrderForm.get('merchantPhoneNumber')?.invalid && 
+                        (froomOrderForm.get('merchantPhoneNumber')?.dirty 
+                        || froomOrderForm.get('merchantPhoneNumber')?.touched)"
+                            style="margin-top: 5px; margin-left:5px;">
+                            <span class="text text-danger">Please provide a Merchant Phone Number.</span>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-primary" style="float: right;" (click)="continueToProductSelection()"
+                            [disabled]="validateMerchantForm()">Next</button>
+                    </div>
+
+
+
+
+                </div>
+            </mat-expansion-panel>
+
+        </mat-accordion>
+        <br>
+        <mat-accordion *ngIf="showProductSelection">
+            <mat-expansion-panel class="w-100" [expanded]="showProductSelectionSection">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-shopping-cart" aria-hidden="true"></i> &nbsp;&nbsp;
+                        <b>Order Details</b>
+                    </mat-panel-title>
+                    <mat-panel-description class="justify-content-end">
+                        <span *ngIf="cartMessage" (click)="$event.stopPropagation()" class=""><b>
+                                <i> {{cartMessage}} </i>
+                            </b>
+                        </span>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div class="row">
+
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>Transaction Id:</b></label>
+
+                        <input class="form-control required" formControlName="transactionId"
+                            placeholder="Transaction ID">
+
+                        <div *ngIf="froomOrderForm.get('transactionId')?.invalid && 
+                        (froomOrderForm.get('transactionId')?.dirty 
+                        || froomOrderForm.get('transactionId')?.touched)" style="margin-top: 5px; margin-left:5px;">
+                            <span class="text text-danger">Transaction ID is required.</span>
+                        </div>
+                    </div>
+                    <div class="col-3" style="float: right; margin-top: 30px;">
+                        <button class="btn btn-sm btn-secondary" (click)="addProductsForm()">Add Product</button>
+                    </div>
+
+                    <div formArrayName="products" class="col-12 mb-3">
+                        <div
+                            *ngFor="let prodArray of productFromAttrControl; let i=index; let c= count; let last= last">
+                            <div [formGroupName]="i" class="row">
+                                <div class="col-12 mb-3"><strong>Product <span style="color: red;">{{i+1}}</span>
+                                        Details: </strong></div>
+                                <div class="col-6 mb-3">
+                                    <label class="form-label">
+                                        <b>Product Name:</b></label>
+
+
+                                    <input type="text" class="form-control required" formControlName="productName"
+                                        placeholder="Product Name">
+
+                                    <div *ngIf="prodArray.get('productName')?.invalid && 
+                                (prodArray.get('productName')?.dirty 
+                                || prodArray.get('productName')?.touched)" style="margin-top: 5px; margin-left:5px;">
+                                        <span class="text text-danger">Product Name is required.</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">
+                                        <b>Product Description:</b></label>
+
+
+                                    <input type="text" class="form-control required"
+                                        formControlName="productDescription" placeholder="Product Description">
+
+                                    <div *ngIf="prodArray.get('productDescription')?.invalid && 
+                                        (prodArray.get('productDescription')?.dirty 
+                                        || prodArray.get('productDescription')?.touched)"
+                                        style="margin-top: 5px; margin-left:5px;">
+                                        <span class="text text-danger">Product Description is required.</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-3 mb-3">
+                                    <label class="form-label">
+                                        <b>Product Cateogry:</b></label>
+
+
+                                    <input type="text" class="form-control required" formControlName="productCategory"
+                                        placeholder="Product Cateogry">
+
+                                    <div *ngIf="prodArray.get('productCategory')?.invalid && 
+                                        (prodArray.get('productCategory')?.dirty 
+                                        || prodArray.get('productCategory')?.touched)"
+                                        style="margin-top: 5px; margin-left:5px;">
+                                        <span class="text text-danger">Product Category is required.</span>
+                                    </div>
+                                </div>
+                                <div class="col-3 mb-3">
+                                    <label class="form-label">
+                                        <b>Product ID:</b></label>
+
+
+                                    <input type="text" class="form-control required" formControlName="productId"
+                                        placeholder="Product ID">
+
+                                    <div *ngIf="prodArray.get('productId')?.invalid && 
+                                        (prodArray.get('productId')?.dirty 
+                                        || prodArray.get('productId')?.touched)"
+                                        style="margin-top: 5px; margin-left:5px;">
+                                        <span class="text text-danger">Product ID is required.</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-4 mb-3">
+                                    <label class="form-label">
+                                        <b>Product Price: </b></label>
+
+
+                                    $<input type="text" class="form-control required" formControlName="productPrice"
+                                        placeholder="Product Price">
+
+                                    <div *ngIf="prodArray.get('productPrice')?.invalid && 
+                                        (prodArray.get('productPrice')?.dirty 
+                                        || prodArray.get('productPrice')?.touched)"
+                                        style="margin-top: 5px; margin-left:5px;">
+                                        <span class="text text-danger">Product Price is required.</span>
+                                    </div>
+                                </div>
+                                <div class="col-2 mb-3">
+                                    <label class="form-label">
+                                        <b>Product Quantity:</b></label>
+
+
+                                    <input type="text" class="form-control required" formControlName="productQuantity"
+                                        placeholder="Product Quantity">
+
+                                    <div *ngIf="prodArray.get('productQuantity')?.invalid && 
+                                        (prodArray.get('productQuantity')?.dirty 
+                                        || prodArray.get('productQuantity')?.touched)"
+                                        style="margin-top: 5px; margin-left:5px;">
+                                        <span class="text text-danger">Product Quantity is required.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12" *ngIf="totalItmes > 0">
+                    <button class="btn btn-primary" style="float: right;" (click)="cacluateCartValue()"
+                        [disabled]="validateOrderForm()">Calculate Cart Value</button>
+                </div>
+            </mat-expansion-panel>
+
+        </mat-accordion>
+        <br>
+        <mat-accordion *ngIf="showConfirmationSelection">
+            <mat-expansion-panel class="w-100" [expanded]="showConfirmationSelectionSection">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-check-circle" aria-hidden="true"></i> &nbsp;&nbsp;
+                        <b>Confirmation</b>
+                    </mat-panel-title>
+                    <mat-panel-description class="justify-content-end">
+
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div class="row">
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>Transaction ID:
+                                <span class="text text-primary">
+                                    &nbsp;&nbsp;{{froomOrderForm.value.transactionId}}</span>
+                            </b>
+                        </label>
+
+
+                    </div>
+
+                    <div class="col-8 mb-3">
+                        <label class="form-label">
+                            <b>Total Cart Value:
+                                <span class="text text-primary">&nbsp;&nbsp;$&nbsp;{{totalCartValue}}</span>
+                            </b>
+                        </label>
+
+
+                    </div>
+
+
+
+
+                </div>
+            </mat-expansion-panel>
+
+        </mat-accordion>
+    </form>
+</div>
+<div class="modal-footer">
+    <div class="p-2 ml-auto">
+        <button class="btn btn-light" >Close</button>
+        <button class="btn btn-success" [disabled]="!calculationDone || froomOrderForm.invalid" (click)="addFroomOrder()">Add Froom
+            Order</button>
+    </div>
+</div>

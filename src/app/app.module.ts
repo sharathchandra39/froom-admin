@@ -18,6 +18,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FroomLocationsComponent } from './components/froom-admin/froom-locations/froom-locations.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { FroomOrderMgmtComponent } from './components/froom-admin/froom-orders/ordermgmt/froom-order-mgmt/froom-order-mgmt.component';
+import { MerchantMgmtComponent } from './components/merchant/merchant-mgmt/merchant-mgmt.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     FroomAdminComponent,
     FroomOrdersComponent,
     FroomLocationsComponent,
+    FroomOrderMgmtComponent,
+    MerchantMgmtComponent,
   ],
   imports: [
     BrowserModule,

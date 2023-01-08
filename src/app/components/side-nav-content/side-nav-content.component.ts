@@ -10,7 +10,8 @@ export class SideNavContentComponent {
   navItems = [
     { label: 'Home', route: '/home'},
     { label: 'Froom-Orders', route: '/froom-orders'},
-    { label: 'Froom-Locations', route: '/froom-locations'}
+    { label: 'Froom-Locations', route: '/froom-locations'},
+    { label: 'Merchant-Management', route: '/merchant-updates'}
   ];
 
   constructor(private router: Router) { }

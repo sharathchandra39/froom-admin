@@ -12,13 +12,16 @@
                 <mat-panel-description class="justify-content-end">
                     <span (click)="$event.stopPropagation()">
                         <button class="btn btn-sm btn-secondary" style="margin-right: 5px; margin-bottom: 10px;"
+                            title="Add a new Froom Order" (click)="openAddModal(manageFroomOrder)">
+                            <i class="fa fa-plus" aria-hidden="true"></i> </button>
+                        <button class="btn btn-sm btn-secondary" style="margin-right: 5px; margin-bottom: 10px;"
                             [disabled]=" !selectedRowData || selectedRowData.length == 0"
                             title="Select a Row to View Order Details" (click)="openViewModal(viewFroomOrder)">
-                            <i class="fa fa-eye" aria-hidden="true"></i>  </button>
+                            <i class="fa fa-eye" aria-hidden="true"></i> </button>
                         <button class="btn btn-sm btn-secondary" style="margin-right: 5px; margin-bottom: 10px;"> <i
                                 class="fa fa-refresh" aria-hidden="true"></i> </button>
                         <button class="btn btn-sm btn-secondary" style="margin-right: 5px; margin-bottom: 10px;"> <i
-                                class="fa fa-download" aria-hidden="true"></i>  </button>
+                                class="fa fa-download" aria-hidden="true"></i> </button>
                     </span>
                 </mat-panel-description>
             </mat-expansion-panel-header>
@@ -26,10 +29,10 @@
             <div class="col-12" *ngIf="rowData$ && rowData$.length>0; else noData">
 
                 <ag-grid-angular style="width: 100%; clear: both; height: 40vh; border: none; margin-top: 0px;"
-                    class="ag-theme-alpine" [columnDefs]="columnDefs" 
-                    [rowData]="rowData$" [gridOptions]="gridOptions" [suppressMenuHide]="true"
-                    [rowSelection]="gridOptions.rowSelection" (selectionChanged)="onSelectionChanged($event)"
-                    [animateRows]="true" (gridReady)="onGridReady($event)">
+                    class="ag-theme-alpine" [columnDefs]="columnDefs" [rowData]="rowData$" [gridOptions]="gridOptions"
+                    [suppressMenuHide]="true" [rowSelection]="gridOptions.rowSelection"
+                    (selectionChanged)="onSelectionChanged($event)" [animateRows]="true"
+                    (gridReady)="onGridReady($event)">
                 </ag-grid-angular>
             </div>
         </mat-expansion-panel>
@@ -56,16 +59,16 @@
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             <i class="fa fa-info-circle" aria-hidden="true"></i>
- &nbsp;&nbsp;
+                            &nbsp;&nbsp;
                             <b>Froom Order Details : </b>
                         </mat-panel-title>
                         <mat-panel-description class="justify-content-end">
                             <span (click)="$event.stopPropagation()">
-                               
+
                             </span>
                         </mat-panel-description>
                     </mat-expansion-panel-header>
-                    <div  *ngIf="finalProductDetails ">
+                    <div *ngIf="finalProductDetails ">
                         <div *ngFor="let prod of $any(finalProductDetails[0]); let i=index">
                             <div class="row">
 
@@ -84,9 +87,9 @@
                             <hr>
                         </div>
                     </div>
-                    
+
                 </mat-expansion-panel>
-        
+
             </mat-accordion>
         </div>
         <div class="modal-footer">
@@ -96,4 +99,17 @@
         </div>
     </div>
 
+</ng-template>
+
+<ng-template #manageFroomOrder let-modal>
+    <div>
+        <div class="modal-header">
+            <h4 class="modal-title"><b>Manage a Froom Order</b></h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross-click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <app-froom-order-mgmt></app-froom-order-mgmt>
+        
+    </div>
 </ng-template>

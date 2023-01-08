@@ -8,10 +8,10 @@ export class FroomApiService {
 
   constructor(private http: HttpClient) { }
 
-  url = 'http://192.168.0.105:8080'
+  url = 'http://192.168.0.112:8080'
 
   public getFroomLocations(zipID: any) {
-    const restURL = this.url + '/froom/zipID?zipID=30001'
+    const restURL = this.url + '/froom/zipID?zipID='+zipID;
     return this.http.get(restURL);
   }
 
@@ -41,5 +41,16 @@ export class FroomApiService {
     const restURL = this.url + '/froom/location'; 
     return this.http.post(restURL, froomLocation);
   }
+
+  public addFroomOrder(froomOrder: any) {
+    const restURL = this.url + '/froom/froom/order'; 
+    return this.http.post(restURL, froomOrder);
+  }
+
+  public updateFroomOrder(froomOrder: any) {
+    const restURL = this.url + '/froom/merchant/order'; 
+    return this.http.post(restURL, froomOrder);
+  }
+
  
 }

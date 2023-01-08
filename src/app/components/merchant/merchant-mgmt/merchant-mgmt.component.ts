@@ -1,40 +1,35 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AgGridAngular } from 'ag-grid-angular';
-import {
-  CellClickedEvent,
-  ColDef,
-  GridOptions,
-  GridReadyEvent,
-} from 'ag-grid-community';
-import { Observable } from 'rxjs';
-import { Product } from 'src/app/models/product';
+import { ColDef, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import { FroomCustomer } from 'src/app/models/froom.customer';
+import { FroomMerchant } from 'src/app/models/froom.merchant';
+import { FroomOrder } from 'src/app/models/froom.order';
+import { FroomOrderDetails } from 'src/app/models/froom.order.details';
+import { FroomOrderUpdate } from 'src/app/models/froom.order.update';
 import { FroomApiService } from 'src/app/services/froom-api.service';
 
 @Component({
-  selector: 'app-froom-orders',
-  templateUrl: './froom-orders.component.html',
-  styleUrls: ['./froom-orders.component.css'],
+  selector: 'app-merchant-mgmt',
+  templateUrl: './merchant-mgmt.component.html',
+  styleUrls: ['./merchant-mgmt.component.css'],
 })
-export class FroomOrdersComponent implements OnInit {
-  orders: any;
-  public columnDefs!: ColDef[];
-  selectedRowData: any;
-  orderDetails: any;
-  productDetails: Product[] = [];
-  finalProductDetails!: Product[];
-  froomLocationsData!: any[];
-  constructor(
-    private froomService: FroomApiService, 
-    private modalService: NgbModal  ) {}
-
-  
+export class MerchantMgmtComponent implements OnInit {
   public rowData$!: any;
   gridOptions!: GridOptions;
   gridApi: any;
   gridColumnApi: any;
+  selectedRowData: any;
+  public columnDefs!: ColDef[];
+
+  froomUpdateForm!: FormGroup;
+  updateFroomObjt!: FroomOrderUpdate;
 
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
+  // saveCustomerObjt!: FroomCustomer;
+  // saveMerchantObjt!: FroomMerchant;
+  saveFroomOrderDetails!: FroomOrderDetails;
 
   onGridReady(params?: GridReadyEvent) {
     this.gridApi = params?.api;
@@ -44,11 +39,23 @@ export class FroomOrdersComponent implements OnInit {
   onSelectionChanged(event: any) {
     this.selectedRowData = this.gridApi.getSelectedRows();
     console.log(this.selectedRowData);
-    
   }
-
   ngOnInit(): void {
     this.fetchAvailableOrders();
+  }
+
+  constructor(
+    private froomService: FroomApiService,
+    private modalService: NgbModal
+  ) {}
+
+  setupFormObject() {
+    this.froomUpdateForm = new FormGroup({
+      newStatus: new FormControl('', Validators.required),
+      trackingId: new FormControl('', Validators.required),
+      trackingDetails: new FormControl('', Validators.required),
+      comments: new FormControl(''),
+    });
   }
 
   private fetchAvailableOrders() {
@@ -122,48 +129,32 @@ export class FroomOrdersComponent implements OnInit {
       }
     );
   }
-  viewAction() {
-    throw new Error('Method not implemented.');
-  }
 
-  // onCellClicked(e: CellClickedEvent): void {
-  //   console.log('cellClicked', e);
-  //   this.selectedRowData = e;
-  // }
-
-  // Example using Grid's API
-  clearSelection(): void {
-    this.agGrid.api.deselectAll();
-  }
-
-  refresh(){
-    this.fetchAvailableOrders();
-  }
-
-  openViewModal(content: any) {
-    this.fetchOrderDetails(content);
-  }
-
-  openAddModal(content: any){
-    this.modalService.open(content, {size: 'xl', windowClass: 'my-class', scrollable: false, backdrop: 'static'})
-  }
-
-  fetchOrderDetails(content: any) {
-    this.froomService.getFroomOrderForUUID(this.selectedRowData[0].uuID)
-    .subscribe(data=> {
-      this.orderDetails = {};
-      debugger;
-      if(data) {
-        this.orderDetails = data;
-        this.productDetails = JSON.parse("["+this.orderDetails.froomOrderDetails.productDetails+"]"); 
-        this.productDetails.forEach(data=> {this.finalProductDetails = [];
-          this.finalProductDetails.push(data); }); 
-        this.finalProductDetails = JSON.parse ("["+this.finalProductDetails+"]");
-        console.log(this.finalProductDetails);
-        // this.fetchLocations(this.orderDetails.froomZipId);
-        this.modalService.open(content, {size: 'xl', windowClass: 'my-class', scrollable: false, backdrop: 'static'})
-      }
-    }, error=> {console.error(error);
+  openEditModal(content: any) {
+    this.setupFormObject();
+    this.modalService.open(content, {
+      size: 'xl',
+      windowClass: 'my-class',
+      scrollable: false,
+      backdrop: 'static',
     });
+  }
+
+  updateFroomOrder() {
+    this.updateFroomObjt = new FroomOrderUpdate();
+
+    this.updateFroomObjt.newStatus = this.froomUpdateForm.value.newStatus;
+    this.updateFroomObjt.trackingID = this.froomUpdateForm.value.trackingId;
+    this.updateFroomObjt.trackingInfo =
+      this.froomUpdateForm.value.trackingDetails;
+    this.updateFroomObjt.comments = this.froomUpdateForm.value.comments;
+this.updateFroomObjt.uuID = this.selectedRowData[0].uuID; 
+    this.froomService
+      .updateFroomOrder(this.updateFroomObjt)
+      .subscribe((data) => {
+        if (data) {
+          alert('Order updated successfully');
+        }
+      });
   }
 }

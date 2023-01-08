@@ -1,0 +1,139 @@
+<div class="row " style="width: 100%; height: 100%;">
+
+    <mat-accordion>
+        <mat-expansion-panel class="w-100" [expanded]="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <i class="fa fa-list" aria-hidden="true"></i> &nbsp;&nbsp;
+                    <b>List of Froom Orders (Merchant)</b>
+                </mat-panel-title>
+                <mat-panel-description class="justify-content-end">
+                    <span (click)="$event.stopPropagation()">
+                        <button class="btn btn-sm btn-secondary" style="margin-right: 5px; margin-bottom: 10px;"
+                            title="Update the Order Status" (click)="openEditModal(manageFroomOrder)"
+                            [disabled]=" !selectedRowData || selectedRowData.length == 0">
+                            <i class="fa fa-pencil-square" aria-hidden="true"></i> </button>
+                        <!-- <button class="btn btn-sm btn-secondary" style="margin-right: 5px; margin-bottom: 10px;"
+                            [disabled]=" !selectedRowData || selectedRowData.length == 0"
+                            title="Select a Row to View Order Details" (click)="openViewModal(viewFroomOrder)">
+                            <i class="fa fa-eye" aria-hidden="true"></i> </button> -->
+                        <button class="btn btn-sm btn-secondary" style="margin-right: 5px; margin-bottom: 10px;"> <i
+                                class="fa fa-refresh" aria-hidden="true"></i> </button>
+                        <button class="btn btn-sm btn-secondary" style="margin-right: 5px; margin-bottom: 10px;"> <i
+                                class="fa fa-download" aria-hidden="true"></i> </button> -->
+                    </span>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="col-12" *ngIf="rowData$ && rowData$.length>0; else noData">
+
+                <ag-grid-angular style="width: 100%; clear: both; height: 40vh; border: none; margin-top: 0px;"
+                    class="ag-theme-alpine" [columnDefs]="columnDefs" [rowData]="rowData$" [gridOptions]="gridOptions"
+                    [suppressMenuHide]="true" [rowSelection]="gridOptions.rowSelection"
+                    (selectionChanged)="onSelectionChanged($event)" [animateRows]="true"
+                    (gridReady)="onGridReady($event)">
+                </ag-grid-angular>
+            </div>
+        </mat-expansion-panel>
+
+    </mat-accordion>
+
+</div>
+<ng-template #noData>
+    No Data
+</ng-template>
+
+<ng-template #manageFroomOrder let-modal>
+    <div>
+        <div class="modal-header">
+            <h4 class="modal-title"><b>Update Order Status</b></h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross-click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="froomUpdateForm">
+                <div class="row">
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>Transaction ID:
+                                <span class="text text-primary">
+                                    &nbsp;&nbsp;{{selectedRowData[0].transactionID}}</span>
+                            </b>
+                        </label>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>Froom ID:
+                                <span class="text text-primary">
+                                    &nbsp;&nbsp;{{selectedRowData[0].uuID}}</span>
+                            </b>
+                        </label>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>Current Status:
+                                <span class="text text-primary">
+                                    &nbsp;&nbsp;{{selectedRowData[0].froomOrderStatus}}</span>
+                            </b>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>New Status:</b></label>
+
+                        <input class="form-control required" formControlName="newStatus"
+                            placeholder="New Status for the Order">
+
+                        <div *ngIf="froomUpdateForm.get('newStatus')?.invalid && 
+                    (froomUpdateForm.get('newStatus')?.dirty 
+                    || froomUpdateForm.get('newStatus')?.touched)" style="margin-top: 5px; margin-left:5px;">
+                            <span class="text text-danger">Status is Required.</span>
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>Tracking ID:</b></label>
+
+                        <input class="form-control required" formControlName="trackingId" placeholder="Tracking ID">
+
+                        <div *ngIf="froomUpdateForm.get('trackingId')?.invalid && 
+                    (froomUpdateForm.get('trackingId')?.dirty 
+                    || froomUpdateForm.get('trackingId')?.touched)" style="margin-top: 5px; margin-left:5px;">
+                            <span class="text text-danger">Tracking ID is Required.</span>
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>Tracking Details:</b></label>
+
+                        <input class="form-control required" formControlName="trackingDetails"
+                            placeholder="Tracking Details">
+
+                        <div *ngIf="froomUpdateForm.get('trackingDetails')?.invalid && 
+                    (froomUpdateForm.get('trackingDetails')?.dirty 
+                    || froomUpdateForm.get('trackingDetails')?.touched)" style="margin-top: 5px; margin-left:5px;">
+                            <span class="text text-danger">Status is Required.</span>
+                        </div>
+                    </div>
+                    <div class="col-4 mb-3">
+                        <label class="form-label">
+                            <b>Comments:</b></label>
+
+                        <input class="form-control " formControlName="comments" placeholder="Comments">
+
+
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-light " style="margin-right: 5px;"
+                (click)="modal.dismiss('Cross-click')">Close</button>
+                <button class="btn btn-success" [disabled]="froomUpdateForm.invalid" (click)="updateFroomOrder()">Update Froom
+                    Order</button>
+        </div>
+    </div>
+</ng-template>
